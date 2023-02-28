@@ -1,5 +1,12 @@
 package main
 
-func main() {
+import (
+	"api/src/router"
+	"log"
+	"net/http"
+)
 
+func main() {
+	r := router.NewRoute()
+	log.Fatal(http.ListenAndServe(":5000", r))
 }
