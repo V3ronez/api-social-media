@@ -1,0 +1,15 @@
+CREATE DATABASE golang_studies;
+
+USE golang_studies;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(60) NOT NULL,
+  nickname VARCHAR(60) NOT NULL,
+  ssn VARCHAR(20) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
