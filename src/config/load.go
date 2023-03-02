@@ -24,5 +24,5 @@ func LoadDB() {
 	}
 
 	StringConnection = fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_name"))
+		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 }
