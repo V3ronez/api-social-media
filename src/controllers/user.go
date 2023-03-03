@@ -4,9 +4,9 @@ import (
 	"api/src/database"
 	"api/src/model"
 	"api/src/repository"
+	"api/src/utils"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -21,23 +21,35 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	bodyRequest, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Fatal("Error to get the body of request")
+		utils.Error(w, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	var user model.User
 	if err = json.Unmarshal(bodyRequest, &user); err != nil {
-		log.Fatal("Error to parser body json")
+		utils.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	db, err := database.ConnectDB()
 	if err != nil {
-		log.Fatal(err)
+		utils.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 	repository := repository.InitRepository(db)
-	_, err = repository.CreateUser(user)
+	userId, err := repository.CreateUser(user)
 	if err != nil {
-		log.Fatal(err)
+		utils.Error(w, http.StatusInternalServerError, err)
+		return
 	}
+	userCreated := model.User{
+		ID:       userId,
+		Name:     user.Name,
+		Nickname: user.Nickname,
+		SSN:      user.SSN,
+	}
+
+	utils.JsonResponse(w, http.StatusCreated, userCreated)
 	// w.Write([]byte(fmt.Sprintf("User create successfully! ID: %s", id))) // example to make a return
 }
 
