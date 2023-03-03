@@ -34,7 +34,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	repository := repository.InitRepository(db)
-	repository.CreateUser(user)
+	_, err = repository.CreateUser(user)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// w.Write([]byte(fmt.Sprintf("User create successfully! ID: %s", id))) // example to make a return
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {

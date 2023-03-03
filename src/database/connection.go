@@ -3,7 +3,6 @@ package database
 import (
 	"api/src/config"
 	"database/sql"
-	"fmt"
 
 	_ "github.com/lib/pq" // Driver (implicit import)
 )
@@ -18,6 +17,5 @@ func ConnectDB() (*sql.DB, error) {
 		db.Close()
 		return nil, err
 	}
-	fmt.Println("⚡️ Database running... 🔥")
 	return db, nil
 }
