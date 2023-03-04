@@ -31,6 +31,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err = user.ValidateFields(); err != nil {
+		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
 	db, err := database.ConnectDB()
 	if err != nil {
 		utils.Error(w, http.StatusInternalServerError, err)
