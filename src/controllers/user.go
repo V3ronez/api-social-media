@@ -64,7 +64,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = user.ValidateFields(); err != nil {
+	if err = user.ValidateFields(true); err != nil {
 		utils.Error(w, http.StatusBadRequest, err)
 		return
 	}
@@ -92,7 +92,40 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("get user!"))
+
+	p := mux.Vars(r)
+	b, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		utils.Error(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var user model.User
+	if err = json.Unmarshal(b, &user); err != nil {
+		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = user.ValidateFields(false); err != nil {
+		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.ConnectDB()
+
+	if err != nil {
+		utils.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	u := repository.InitRepository(db)
+	if err = u.UpdateUser(p["id"], user); err != nil {
+		utils.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	utils.JsonResponse(w, http.StatusNoContent, nil)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {

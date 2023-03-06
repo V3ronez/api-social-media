@@ -16,7 +16,7 @@ type User struct {
 	Updated_at time.Time `json:"updated_at,omitempty"`
 }
 
-func (u *User) ValidateFields() error {
+func (u *User) ValidateFields(create bool) error {
 	u.emptySpaces()
 	if u.Name == "" {
 		return errors.New("error: field name can't be a empty value")
@@ -27,7 +27,8 @@ func (u *User) ValidateFields() error {
 	if u.SSN == "" {
 		return errors.New("error: field SSN can't be a empty value")
 	}
-	if u.Password == "" {
+
+	if create && u.Password == "" {
 		return errors.New("error: field password can't be a empty value")
 	}
 

@@ -20,7 +20,6 @@ func (repository Users) CreateUser(user model.User) (string, error) {
 
 	var query = `INSERT INTO users (name, nickname, ssn, password) VALUES ($1, $2, $3, $4) RETURNING id`
 	err := repository.db.QueryRow(query, &user.Name, &user.Nickname, &user.SSN, &user.Password).Scan(&user.ID)
-
 	if err != nil {
 		return "", err
 	}
@@ -61,4 +60,17 @@ func (repository Users) Search(param string) ([]model.User, error) {
 		us = append(us, u)
 	}
 	return us, nil
+}
+
+func (repository Users) UpdateUser(id string, u model.User) error {
+	query := `UPDATE users SET name = $1, nickname = $2, ssn = $3 WHERE id = $4;`
+	stmt, err := repository.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	if _, err = stmt.Exec(u.Name, u.Nickname, u.SSN, id); err != nil {
+		return err
+	}
+	return nil
 }
