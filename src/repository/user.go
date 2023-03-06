@@ -74,6 +74,7 @@ func (repository Users) UpdateUser(id string, u model.User) error {
 	}
 	return nil
 }
+
 func (repository Users) DeleteUser(id string) error {
 	query := `DELETE FROM users WHERE id = $1`
 
@@ -87,4 +88,19 @@ func (repository Users) DeleteUser(id string) error {
 		return err
 	}
 	return nil
+}
+func (repository Users) SearchSSN(SSN string) (model.User, error) {
+	query := `SELECT id, password FROM users WHERE ssn = $1`
+	row, err := repository.db.Query(query, SSN)
+	if err != nil {
+		return model.User{}, err
+	}
+	defer row.Close()
+	var u model.User
+	if row.Next() {
+		if err = row.Scan(&u.ID, &u.Password); err != nil {
+			return model.User{}, err
+		}
+	}
+	return u, nil
 }
