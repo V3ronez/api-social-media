@@ -1,6 +1,7 @@
 package model
 
 import (
+	"api/src/security"
 	"errors"
 	"strings"
 	"time"
@@ -17,7 +18,7 @@ type User struct {
 }
 
 func (u *User) ValidateFields(create bool) error {
-	u.emptySpaces()
+	u.emptySpaces(create)
 	if u.Name == "" {
 		return errors.New("error: field name can't be a empty value")
 	}
@@ -35,9 +36,18 @@ func (u *User) ValidateFields(create bool) error {
 	return nil
 }
 
-func (u *User) emptySpaces() {
+func (u *User) emptySpaces(create bool) error {
 	u.Name = strings.TrimSpace(u.Name)
 	u.Nickname = strings.TrimSpace(u.Nickname)
 	u.SSN = strings.TrimSpace(u.SSN)
 	u.Password = strings.TrimSpace(u.Password)
+
+	if create {
+		p, err := security.Hash(u.Password)
+		if err != nil {
+			return err
+		}
+		u.Password = string(p)
+	}
+	return nil
 }
