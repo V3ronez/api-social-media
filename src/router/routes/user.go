@@ -10,7 +10,7 @@ var routesUser = []Route{
 		URI:                "/user/{id}",
 		Method:             http.MethodGet,
 		Function:           controllers.GetUser,
-		NeedAuthentication: false,
+		NeedAuthentication: true,
 	},
 	{
 		URI:                "/users",
@@ -28,12 +28,12 @@ var routesUser = []Route{
 		URI:                "/user/{id}",
 		Method:             http.MethodPut,
 		Function:           controllers.UpdateUser,
-		NeedAuthentication: false,
+		NeedAuthentication: true,
 	},
 	{
 		URI:                "/user/{id}",
 		Method:             http.MethodDelete,
 		Function:           controllers.DeleteUser,
-		NeedAuthentication: false,
+		NeedAuthentication: true,
 	},
 }
