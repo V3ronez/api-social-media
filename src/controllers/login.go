@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"api/src/auth"
 	"api/src/database"
 	"api/src/model"
 	"api/src/repository"
@@ -43,5 +44,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		utils.Error(w, http.StatusUnauthorized, err)
 		return
 	}
-	w.Write([]byte("logged!"))
+	t, err := auth.Jwt(ub.ID)
+	if err != nil {
+		utils.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	w.Write([]byte(t))
 }
