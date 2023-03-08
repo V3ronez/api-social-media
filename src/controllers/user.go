@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"api/src/auth"
 	"api/src/database"
 	"api/src/model"
 	"api/src/repository"
 	"api/src/utils"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -107,8 +109,19 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	uid, err := auth.GetUserId(r)
+	if err != nil {
+		utils.Error(w, http.StatusForbidden, err)
+		return
+	}
+
 	if err = user.ValidateFields(false); err != nil {
 		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if p["id"] != uid {
+		utils.Error(w, http.StatusForbidden, errors.New("action not valid fot this user"))
 		return
 	}
 

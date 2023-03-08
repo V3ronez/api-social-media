@@ -27,10 +27,9 @@ func Jwt(userId string) (string, error) {
 
 func ValidateToken(r *http.Request) error {
 	th := GetToken(r)
-	// fmt.Println(th)
 
 	tk, err := jwt.Parse(th, validateKeyToken)
-	// fmt.Println(tk)
+
 	if err != nil {
 		return err
 	}
@@ -55,4 +54,17 @@ func validateKeyToken(t *jwt.Token) (interface{}, error) {
 	}
 
 	return config.SecretKey, nil
+}
+
+func GetUserId(r *http.Request) (string, error) {
+	ts := GetToken(r)
+	t, err := jwt.Parse(ts, validateKeyToken)
+	if err != nil {
+		return "", err
+	}
+	if p, ok := t.Claims.(jwt.MapClaims); ok && t.Valid {
+		uid := fmt.Sprintf("%s", p["userId"])
+		return uid, nil
+	}
+	return "", errors.New("error to get userId in token")
 }
