@@ -11,6 +11,7 @@ import (
 
 var Port = 0
 var StringConnection = ""
+var SecretKey []byte
 
 func LoadDB() {
 	var err error
@@ -25,4 +26,6 @@ func LoadDB() {
 
 	StringConnection = fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
 		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY_TOKEN"))
 }
