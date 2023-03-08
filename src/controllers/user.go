@@ -143,6 +143,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	p := mux.Vars(r)
+
+	ut, err := auth.GetUserId(r)
+	if err != nil {
+		utils.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if p["id"] != ut {
+		utils.Error(w, http.StatusForbidden, errors.New("impossible delete another user"))
+		return
+	}
 	db, err := database.ConnectDB()
 
 	if err != nil {
