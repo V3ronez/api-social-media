@@ -169,3 +169,35 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 	utils.JsonResponse(w, http.StatusOK, nil)
 }
+
+func FollowUser(w http.ResponseWriter, r *http.Request) {
+	p := mux.Vars(r)
+	s := p["userId"]
+	uId, err := auth.GetUserId(r)
+
+	if err != nil {
+		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if s == uId {
+		utils.Error(w, http.StatusForbidden, errors.New("user can`t follower himself"))
+		return
+	}
+
+	db, err := database.ConnectDB()
+	if err != nil {
+		utils.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	ru := repository.InitRepository(db)
+	err = ru.FollowUser(&uId, &s)
+	if err != nil {
+		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	utils.JsonResponse(w, http.StatusNoContent, nil)
+}

@@ -104,3 +104,16 @@ func (repository Users) SearchSSN(SSN string) (model.User, error) {
 	}
 	return u, nil
 }
+func (repository Users) FollowUser(uId *string, s *string) error {
+	query := `INSERT INTO followers (user_id, follower_id) VALUES($1, $2)`
+	stmt, err := repository.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	if _, err = stmt.Exec(*uId, *s); err != nil {
+		return err
+	}
+
+	return nil
+}
