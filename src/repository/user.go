@@ -117,3 +117,17 @@ func (repository Users) FollowUser(uId *string, s *string) error {
 
 	return nil
 }
+func (repository Users) UnfollowUser(u *string, s *string) error {
+	query := `DELETE FROM followers WHERE user_id = $1 AND follower_id = $2`
+
+	stmt, err := repository.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(*u, *s); err != nil {
+		return err
+	}
+	return nil
+}

@@ -201,3 +201,34 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 
 	utils.JsonResponse(w, http.StatusNoContent, nil)
 }
+
+func UnFollowUser(w http.ResponseWriter, r *http.Request) {
+	var p map[string]string = mux.Vars(r)
+	var s string = p["userId"]
+
+	u, err := auth.GetUserId(r)
+	if err != nil {
+		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+	if u == s {
+		utils.Error(w, http.StatusBadRequest, errors.New("a user can`t unfollow himself"))
+		return
+	}
+
+	db, err := database.ConnectDB()
+	if err != nil {
+		utils.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repo := repository.InitRepository(db)
+
+	if err = repo.UnfollowUser(&u, &s); err != nil {
+		utils.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	utils.JsonResponse(w, http.StatusNoContent, nil)
+}
